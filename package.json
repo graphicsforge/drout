@@ -1,0 +1,20 @@
+{
+  "name": "drout",
+  "version": "0.0.0",
+  "description": "routing for data",
+  "scripts": {
+    "build": "iojs ./node_modules/browserify/bin/cmd.js lib/drout.js -o build/drout.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/graphicsforge/drout.git"
+  },
+  "author": "graphicsforge",
+  "bugs": {
+    "url": "https://github.com/graphicsforge/drout/issues"
+  },
+  "homepage": "https://github.com/graphicsforge/drout#readme",
+  "devDependencies": {
+    "browserify": "^11.0.1"
+  }
+}
