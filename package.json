@@ -2,8 +2,10 @@
   "name": "drout",
   "version": "0.0.0",
   "description": "routing for data",
+  "main": "lib/drout.js",
   "scripts": {
-    "build": "iojs ./node_modules/browserify/bin/cmd.js -r ./lib/drout.js:drout -o build/drout.js"
+    "build": "iojs ./node_modules/browserify/bin/cmd.js -r ./lib/drout.js:drout -o build/drout.js",
+    "test": "npm run build && iojs --harmony_arrow_functions test.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,8 @@
     "browserify": "^11.0.1"
   },
   "dependencies": {
-    "async": "~1.4.1",
-    "socket.io": "~1.3.6"
+    "async": "~1.4.2",
+    "socket.io": "~1.3.6",
+    "uuid": "~2.0.1"
   }
 }

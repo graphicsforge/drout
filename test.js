@@ -5,12 +5,29 @@ var fs = require('fs');
 
 var http_port = 3000;
 
-var data = {
+var render_on_client = {
   "test_int": 5,
   "test_string": "this is only a test",
+  "child_object": {
+    "child_string": "this is in the child object"
+  },
   "has_property": true
 };
+var render_on_server = {
+  "child_object": {
+    "wow_strings": "such strings!",
+    "inner_child_object": {
+      "inner_child_string": "within the child object"
+    }
+  },
+  "stuff": true
+};
+
 var drout = new Drout.DroutForm();
+
+function stringifyReplacer(key, value) {
+  return key.match(/^_drout_/)?undefined:value;
+}
 
 function httpHandler(request, response) {
   // TODO abstract away this junk
@@ -22,20 +39,42 @@ function httpHandler(request, response) {
     return;
   }
 
-  drout.render(data, function(err, output) {
+  drout.render(render_on_server, function(err, output) {
     response.write(`
-<!DOCTYPE html><style>${Drout.css}</style>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/drout/drout.js"></script>
-<script>
-  var Drout = require('drout');
-  var drout = new Drout.DroutForm();
-  drout.render(${JSON.stringify(data)}, function(err, out){ document.innerHTML = out; });
-  var socket = io('http://localhost:${http_port}');
-</script>
-    `);
-    response.end(`<html>${output}</html>`);
-  });
+      <!DOCTYPE html><style>${Drout.css}</style>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="/drout/drout.js"></script>
+      <script>
+        // attach onload event polyfill?
+        if(typeof(window.attachEvent)=='undefined') {
+          if(window.onload) {
+            window.attachEvent = function(type, callback) {
+              if (type.toLowerCase()!=='onload') return;
+              var current_onload = window.onload;
+              var new_onload = function() {
+                current_onload();
+                callback();
+              };
+              window.onload = newonload;
+            }
+          } else {
+            window.attachEvent = function(type, callback) {
+              if (type.toLowerCase()!=='onload') return;
+              window.onload = callback;
+            }
+          }
+        }
+
+        var Drout = require('drout');
+        var drout = new Drout.DroutForm();
+        drout.render(${JSON.stringify(render_on_client, stringifyReplacer)}, function(err, out) {
+          document.querySelector("html").innerHTML += "<hr>rendered on client side"+out;
+        });
+        var socket = io('http://localhost:${http_port}');
+      </script>
+    `); // response.write
+    response.end(`<html><hr>rendered on the server${output}</html>`);
+  }); // drout.render
 };
 
 http_server.listen(http_port, function(){
