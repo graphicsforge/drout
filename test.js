@@ -23,13 +23,14 @@ var render_on_server = {
   "stuff": true
 };
 
-var drout = new Drout.DroutForm();
+var drout = Drout.boilerplate();
 
 function stringifyReplacer(key, value) {
   return key.match(/^_drout_/)?undefined:value;
 }
 
 function httpHandler(request, response) {
+  console.log(`request for ${request.url}`);
   // TODO abstract away this junk
   // we should on-the-fly browserify
   if (request.url=="/drout/drout.js") {
@@ -39,42 +40,48 @@ function httpHandler(request, response) {
     return;
   }
 
-  drout.render(render_on_server, function(err, output) {
-    response.write(`
-      <!DOCTYPE html><style>${Drout.css}</style>
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="/drout/drout.js"></script>
-      <script>
-        // attach onload event polyfill?
-        if(typeof(window.attachEvent)=='undefined') {
-          if(window.onload) {
-            window.attachEvent = function(type, callback) {
-              if (type.toLowerCase()!=='onload') return;
-              var current_onload = window.onload;
-              var new_onload = function() {
-                current_onload();
-                callback();
-              };
-              window.onload = newonload;
-            }
-          } else {
-            window.attachEvent = function(type, callback) {
-              if (type.toLowerCase()!=='onload') return;
-              window.onload = callback;
+  if (request.url=="/") {
+    drout.render(render_on_server, function(err, output) {
+      response.write(`
+        <!DOCTYPE html><style>${Drout.css}</style>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/drout/drout.js"></script>
+        <script>
+          // attach onload event polyfill?
+          if(typeof(window.attachEvent)=='undefined') {
+            if(window.onload) {
+              window.attachEvent = function(type, callback) {
+                if (type.toLowerCase()!=='onload') return;
+                var current_onload = window.onload;
+                var new_onload = function() {
+                  current_onload();
+                  callback();
+                };
+                window.onload = newonload;
+              }
+            } else {
+              window.attachEvent = function(type, callback) {
+                if (type.toLowerCase()!=='onload') return;
+                window.onload = callback;
+              }
             }
           }
-        }
 
-        var Drout = require('drout');
-        var drout = new Drout.DroutForm();
-        drout.render(${JSON.stringify(render_on_client, stringifyReplacer)}, function(err, out) {
-          document.querySelector("html").innerHTML += "<hr>rendered on client side"+out;
-        });
-        var socket = io('http://localhost:${http_port}');
-      </script>
-    `); // response.write
-    response.end(`<html><hr>rendered on the server${output}</html>`);
-  }); // drout.render
+          var Drout = require('drout');
+          var drout = new Drout();
+          var render_on_client = ${JSON.stringify(render_on_client, stringifyReplacer)};
+          //drout.render(render_on_client, function(err, out) {
+          //  document.querySelector("html").innerHTML += "<hr>rendered on client side"+out;
+          //});
+          var socket = io('http://localhost:${http_port}');
+        </script>
+      `); // response.write
+      response.end(`<html><hr>rendered on the server${output}</html>`);
+    }); // drout.render
+  }
+
+  response.end("unhandled endpoint");
+
 };
 
 http_server.listen(http_port, function(){
