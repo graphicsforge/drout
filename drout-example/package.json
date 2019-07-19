@@ -1,0 +1,26 @@
+{
+  "name": "drout-example",
+  "version": "0.0.0",
+  "description": "example for drout",
+  "esm": "auto",
+  "scripts": {
+    "start": "rm -rf ./node_modules/drout && cp -rf ../drout ./node_modules/drout && node -r esm server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/graphicsforge/drout-example.git"
+  },
+  "author": "graphicsforge",
+  "bugs": {
+    "url": "https://github.com/graphicsforge/drout-example/issues"
+  },
+  "homepage": "https://github.com/graphicsforge/drout-example#readme",
+  "devDependencies": {
+    "webpack": "^4.34.0",
+    "webpack-cli": "^3.3.4"
+  },
+  "dependencies": {
+    "esm": "^3.2.25",
+    "express": "^4.17.1"
+  }
+}

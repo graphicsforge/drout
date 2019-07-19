@@ -1,0 +1,28 @@
+{
+  "name": "drout",
+  "version": "0.0.0",
+  "description": "routing for data",
+  "main": "lib/drout.js",
+  "scripts": {
+    "build": "iojs ./node_modules/browserify/bin/cmd.js -r ./lib/drout.js:drout -o build/drout.js",
+    "test": "npm run build && iojs --harmony_arrow_functions test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/graphicsforge/drout.git"
+  },
+  "author": "graphicsforge",
+  "bugs": {
+    "url": "https://github.com/graphicsforge/drout/issues"
+  },
+  "homepage": "https://github.com/graphicsforge/drout#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "browserify": "^16.3.0",
+    "browserify-string": "^1.1.1",
+    "esm": "^3.2.25",
+    "node-jsx-babel": "^0.14.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
+}
