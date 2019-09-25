@@ -2,8 +2,9 @@
   "componentId": "drout-express",
   "paths": {
     "/": {
-      "componentId": "test-include",
+      "componentId": "drout-editor-wysiwyg",
       "content": {
+        "componentId": "test-include",
         "what": "up"
       }
     },
