@@ -81,7 +81,6 @@ function httpHandler(request, response) {
   }
 
   response.end("unhandled endpoint");
-
 };
 
 http_server.listen(http_port, function(){
